@@ -1,0 +1,25 @@
+max_width = 120
+
+# インデントのスペース数
+hard_tabs = false
+tab_spaces = 4
+
+# 関数の引数リストや構造体のフィールドが長い場合に、ブロック内で改行する
+fn_call_width = 60
+struct_lit_width = 40
+struct_variant_width = 40
+
+# メソッドチェーンが長くなったら改行する
+chain_width = 80
+
+# `use` 文をグループ化し、並べ替える
+reorder_imports = true
+
+# `match` 式のアームのインデントを統一
+match_block_trailing_comma = true
+
+# 配列やタプルが長くなったら改行する
+array_width = 80
+
+# 不要な空白の削除を許可する
+remove_nested_parens = true

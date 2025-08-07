@@ -1,1 +1,11 @@
 /target
+
+# environment files
+.env
+.env.local
+
+# certificates
+*.pem
+*.crt
+*.key
+*.p12

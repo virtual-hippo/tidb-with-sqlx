@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 chrono = { version = "0.4.38", features = ["serde"] }
+tokio = { version = "1", features = ["full"] }
 serde = { version = "1.0.204", features = ["derive"] }
 sqlx = { version = "0.8.0", features = [
   "mysql",

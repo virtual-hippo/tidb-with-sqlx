@@ -29,6 +29,11 @@ DATABASE_URL = "mysql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOS
 # -------------------------------------------------------------------------------------------------
 # rust app
 # -------------------------------------------------------------------------------------------------
+[tasks.run]
+extend = "set-env-local"
+command = "cargo"
+args = ["run"]
+
 [tasks.run-with-tidb]
 env_files = [".env"]
 command = "cargo"

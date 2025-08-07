@@ -1,0 +1,73 @@
+[config]
+default_to_workspace = false
+
+# -------------------------------------------------------------------------------------------------
+# env
+# -------------------------------------------------------------------------------------------------
+[env]
+HOST = "0.0.0.0"
+PORT = 8080
+DATABASE_USERNAME = "app"
+DATABASE_PASSWORD = "passwd"
+DATABASE_NAME = "app"
+DATABASE_PORT_OUTER = 3306
+DATABASE_PORT_INNER = 3306
+
+# Docker Composeのネットワーク内でのDB等への接続情報
+[tasks.set-env-docker.env]
+DATABASE_HOST = "mysql"
+DATABASE_PORT = "${DATABASE_PORT_INNER}"
+DATABASE_URL = "mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?user=${DATABASE_USERNAME}&password=${DATABASE_PASSWORD}"
+
+# Docker Compose外からDB等にアクセスする際の接続情報
+[tasks.set-env-local.env]
+DATABASE_HOST = "localhost"
+DATABASE_PORT = "${DATABASE_PORT_OUTER}"
+DATABASE_URL = "mysql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+
+# -------------------------------------------------------------------------------------------------
+# sqlx
+# -------------------------------------------------------------------------------------------------
+[tasks.migrate]
+extend = "set-env-local"
+install_crate = { crate_name = "sqlx-cli", binary = "sqlx", test_arg = "--help", version = "0.7.3" }
+script = '''
+#!/bin/bash
+until sqlx migrate run --source migrations; do
+    sleep 1
+done
+'''
+
+[tasks.sqlx]
+extend = "set-env-local"
+install_crate = { crate_name = "sqlx-cli", binary = "sqlx", test_arg = "--help", version = "0.7.3" }
+command = "sqlx"
+args = ["${@}", "--source", "migrations"]
+
+# -------------------------------------------------------------------------------------------------
+# Docker Compose
+# -------------------------------------------------------------------------------------------------
+[tasks.compose]
+extend = "set-env-docker"
+command = "docker"
+args = ["compose", "${@}"]
+
+[tasks.compose-up-db]
+extend = "set-env-docker"
+command = "docker"
+args = ["compose", "up", "-d", "mysql"]
+
+[tasks.compose-exec-mysql]
+extend = "set-env-local"
+command = "docker"
+args = ["compose", "exec", "mysql", "mysql", "-h${DATABASE_HOST}", "-P${DATABASE_PORT}", "-u${DATABASE_USERNAME}", "-p${DATABASE_PASSWORD}", "${DATABASE_NAME}", "${@}"]
+
+[tasks.compose-down]
+extend = "set-env-docker"
+command = "docker"
+args = ["compose", "down"]
+
+[tasks.compose-remove]
+extend = "set-env-docker"
+command = "docker"
+args = ["compose", "down", "-v"]

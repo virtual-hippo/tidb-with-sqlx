@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+chrono = { version = "0.4.38", features = ["serde"] }
+serde = { version = "1.0.204", features = ["derive"] }
+sqlx = { version = "0.8.0", features = [
+  "mysql",
+  "runtime-tokio-rustls",
+  "migrate",
+  "chrono",
+] }

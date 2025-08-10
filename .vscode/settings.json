@@ -1,0 +1,11 @@
+{
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+    },
+    "rust-analyzer.server.extraEnv": {
+        "DATABASE_URL": "mysql://app:passwd@localhost:3306/app"
+        // "SQLX_OFFLINE": "true"
+    },
+}

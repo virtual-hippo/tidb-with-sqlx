@@ -1,21 +1,24 @@
+use sqlx::MySqlPool;
 use sqlx::mysql::{MySqlConnectOptions, MySqlSslMode};
-use sqlx::{FromRow, MySqlPool};
 use std::path::PathBuf;
 
-#[derive(FromRow, Debug)]
+#[derive(Debug)]
 #[allow(dead_code)]
 struct User {
     id: i64,
     name: String,
     email: String,
-    created_at: chrono::DateTime<chrono::Utc>,
-    updated_at: chrono::DateTime<chrono::Utc>,
+    created_at: Option<chrono::DateTime<chrono::Utc>>,
+    updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 async fn get_all_users(pool: &MySqlPool) -> Result<Vec<User>, sqlx::Error> {
-    let users = sqlx::query_as::<_, User>("SELECT id, name, email, created_at, updated_at FROM users")
-        .fetch_all(pool)
-        .await?;
+    let users = sqlx::query_as!(
+        User,
+        "SELECT id, name, email, created_at, updated_at FROM users"
+    )
+    .fetch_all(pool)
+    .await?;
     Ok(users)
 }
 
@@ -29,11 +32,13 @@ async fn insert_test_users(pool: &MySqlPool) -> Result<(), sqlx::Error> {
     ];
 
     for (name, email) in test_users {
-        sqlx::query("INSERT INTO users (name, email, created_at, updated_at) VALUES (?, ?, NOW(), NOW())")
-            .bind(name)
-            .bind(email)
-            .execute(pool)
-            .await?;
+        sqlx::query!(
+            "INSERT INTO users (name, email, created_at, updated_at) VALUES (?, ?, NOW(), NOW())",
+            name,
+            email
+        )
+        .execute(pool)
+        .await?;
 
         println!("Inserted user: {} ({})", name, email);
     }
@@ -66,10 +71,9 @@ async fn create_database_pool() -> Result<MySqlPool, Box<dyn std::error::Error>>
         .username(&std::env::var("DATABASE_USERNAME")?)
         .password(&std::env::var("DATABASE_PASSWORD")?)
         .database(&std::env::var("DATABASE_NAME")?);
-        
+
     let options = if let Some(ca_cert_path) = ca_cert_path {
-        options.ssl_mode(MySqlSslMode::VerifyIdentity)
-        .ssl_ca(&ca_cert_path)
+        options.ssl_mode(MySqlSslMode::VerifyIdentity).ssl_ca(&ca_cert_path)
     } else {
         options
     };

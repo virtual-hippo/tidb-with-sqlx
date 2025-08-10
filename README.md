@@ -5,12 +5,14 @@ A Rust application demonstrating async database operations with SQLx, supporting
 ## Features
 
 - Async database operations using SQLx
+- SQLx compile-time verification for type-safe database queries
 - TLS/SSL connection support for secure database access
 - User CRUD operations (Create, Read)
 - Japanese character support in test data
 - Docker Compose setup for local development
 - Database migration support
 - Configurable environment for local and Docker deployments
+- VS Code integration with Rust development settings
 
 ## Dependencies
 
@@ -28,6 +30,8 @@ A Rust application demonstrating async database operations with SQLx, supporting
 │   └── 20250807235854_start.up.sql  # Database schema migration
 ├── certs/
 │   └── local-ca.pem     # CA certificate for TLS connections
+├── .vscode/
+│   └── settings.json    # VS Code project settings for Rust development
 ├── Cargo.toml           # Rust dependencies and project config
 ├── Makefile.toml        # Build tasks and automation
 ├── compose.yaml         # Docker Compose for MySQL setup
@@ -49,6 +53,7 @@ The application demonstrates:
 - Rust toolchain
 - Docker and Docker Compose (for local MySQL)
 - `cargo-make` for task automation
+- VS Code (optional) with rust-analyzer extension for enhanced development experience
 
 ### Local Development with Docker
 
